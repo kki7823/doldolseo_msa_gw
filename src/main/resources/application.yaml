@@ -1,0 +1,25 @@
+server:
+  port: 8090
+---
+spring:
+  application:
+    name: doldolseo_msa_gw
+  cloud:
+    gateway:
+      default-filters:
+        - name: GlobalFilter
+          args:
+            baseMessage: Spring Cloud Gateway GlobalFilter
+            preLogger: true
+            postLogger: true
+      routes:
+        - id: doldolseo-review
+          uri: http://localhost:8080/
+          predicates:
+            - Path=/doldolseo/review/**
+          filters:
+            - name: TestFilter
+              args:
+                baseMessage: \uB3CC\uB3CC\uC11C \uD14C\uC2A4\uD2B8\uD544\uD130 \uC785\uB2C8\uB2E4.
+                preLogger: true
+                postLogger: true
