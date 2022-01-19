@@ -1,26 +1,40 @@
 package com.doldolseo.doldolseo_msa_gw.filter;
 
+import com.doldolseo.doldolseo_msa_gw.utils.JwtUtil;
+import io.netty.handler.codec.http.cookie.Cookie;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
-import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
+import org.springframework.cloud.gateway.filter.GatewayFilterChain;
+import org.springframework.http.HttpCookie;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
-@Component
-public class TestFilter extends AbstractGatewayFilterFactory<GlobalFilter.Config> {
+import java.util.List;
 
-    public TestFilter() {
-        super(GlobalFilter.Config.class);
-    }
+@Component
+public class TestFilter implements GatewayFilter {
+    @Autowired
+    JwtUtil jwtUtil;
 
     @Override
-    public GatewayFilter apply(GlobalFilter.Config config) {
-        return ((exchange, chain) -> {
-            return chain.filter(exchange).then(
-                    Mono.fromRunnable(() -> {
-                        System.out.println(config.getBaseMessage());
-                        System.out.println("2.테스트필터");
-                    })
-            );
-        });
+    public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+        ServerHttpRequest request = exchange.getRequest();
+        System.out.println("메소드 "+request.getMethodValue());
+        HttpCookie cookie = request.getCookies().get("token").get(0);
+        final String token = cookie.toString().substring(6);
+
+        System.out.println("token : " + token);
+
+        String id = jwtUtil.getIdFromToken(token);
+        Boolean expDate = jwtUtil.isTokenExpired(token);
+
+        System.out.println("추출한 id : " + id);
+        System.out.println(expDate);
+
+
+        return chain.filter(exchange);
     }
 }

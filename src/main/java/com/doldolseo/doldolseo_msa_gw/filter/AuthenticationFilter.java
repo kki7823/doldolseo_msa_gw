@@ -26,17 +26,25 @@ public class AuthenticationFilter implements GatewayFilter {
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         ServerHttpRequest request =  exchange.getRequest();
 
-        if (routerValidator.isSecured.test(request)) {
+        if (routerValidator.isAuthRequire.test(request)) {
             if (this.isAuthMissing(request))
                 return this.onError(exchange, "Authorization header is missing in request", HttpStatus.UNAUTHORIZED);
 
-            final String token = this.getAuthHeader(request);
+            String requestTokenHeader = request.getHeaders().getOrEmpty("Authorization").toString();
+            final String token = requestTokenHeader.substring(8,requestTokenHeader.length()-1);
+
+            String id = jwtUtil.getIdFromToken(token);
+            Boolean expDate = jwtUtil.isTokenExpired(token);
+
+            if (this.isAuthMissing(request))
+                return this.onError(exchange, "Authorization header is missing in request", HttpStatus.UNAUTHORIZED);
+
+            /* 토큰 검증하는 로직  : 만료 시간 */
 
             if (jwtUtil.isInvalid(token))
                 return this.onError(exchange, "Authorization header is invalid", HttpStatus.UNAUTHORIZED);
 
             this.populateRequestWithHeaders(exchange, token);
-
         }
 
         return chain.filter(exchange);
@@ -60,7 +68,7 @@ public class AuthenticationFilter implements GatewayFilter {
         Claims claims = jwtUtil.getAllClaimsFromToken(token);
         exchange.getRequest().mutate()
                 .header("id", String.valueOf(claims.get("id")))
-                .header("role", String.valueOf(claims.get("role")))
+                .header("role", "TESTROLE")
                 .build();
     }
 }
