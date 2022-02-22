@@ -3,6 +3,7 @@ package com.doldolseo.doldolseo_msa_gw.filter;
 import com.doldolseo.doldolseo_msa_gw.utils.JwtUtil;
 import com.doldolseo.doldolseo_msa_gw.utils.RouterValidator;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
@@ -13,6 +14,7 @@ import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
+import java.time.LocalDateTime;
 
 @RefreshScope
 @Component
@@ -24,25 +26,49 @@ public class AuthenticationFilter implements GatewayFilter {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        ServerHttpRequest request =  exchange.getRequest();
+        ServerHttpRequest request = exchange.getRequest();
 
         if (routerValidator.isAuthRequire.test(request)) {
             if (this.isAuthMissing(request))
-                return this.onError(exchange, "Authorization header is missing in request", HttpStatus.UNAUTHORIZED);
+                return this.onError(
+                        exchange,
+                        "Authorization header is missing in request"
+                );
 
-            String requestTokenHeader = request.getHeaders().getOrEmpty("Authorization").toString();
-            final String token = requestTokenHeader.substring(8,requestTokenHeader.length()-1);
+            String requestTokenHeader = request
+                    .getHeaders()
+                    .getOrEmpty("Authorization")
+                    .toString();
+            final String token = requestTokenHeader
+                    .substring(8, requestTokenHeader.length() - 1);
 
-            String id = jwtUtil.getIdFromToken(token);
-            Boolean expDate = jwtUtil.isTokenExpired(token);
+            if (token.equals("null")) {
+                return this.onError(
+                        exchange,
+                        "Token is null"
+                );
+            }
 
-            if (this.isAuthMissing(request))
-                return this.onError(exchange, "Authorization header is missing in request", HttpStatus.UNAUTHORIZED);
+            try {
+                if (jwtUtil.isInvalid(token))
+                    return this.onError(
+                            exchange,
+                            "Authorization Fail"
+                    );
 
-            /* 토큰 검증하는 로직  : 만료 시간 */
+                if (jwtUtil.isTokenExpired(token))
+                    return this.onError(
+                            exchange,
+                            "Token Expired"
+                    );
 
-            if (jwtUtil.isInvalid(token))
-                return this.onError(exchange, "Authorization header is invalid", HttpStatus.UNAUTHORIZED);
+            } catch (JwtException e) {
+                System.out.println(e.getMessage());
+                return this.onError(
+                        exchange,
+                        "Authorization Fail"
+                );
+            }
 
             this.populateRequestWithHeaders(exchange, token);
         }
@@ -50,9 +76,10 @@ public class AuthenticationFilter implements GatewayFilter {
         return chain.filter(exchange);
     }
 
-    private Mono<Void> onError(ServerWebExchange exchange, String err, HttpStatus httpStatus) {
+    private Mono<Void> onError(ServerWebExchange exchange, String err) {
         ServerHttpResponse response = exchange.getResponse();
-        response.setStatusCode(httpStatus);
+        response.setStatusCode(HttpStatus.UNAUTHORIZED);
+        System.out.println(LocalDateTime.now() + " [인증 실패]-" + err);
         return response.setComplete();
     }
 
@@ -60,15 +87,11 @@ public class AuthenticationFilter implements GatewayFilter {
         return !request.getHeaders().containsKey("Authorization");
     }
 
-    private String getAuthHeader(ServerHttpRequest request) {
-        return request.getHeaders().getOrEmpty("Authorization").get(0);
-    }
-
     private void populateRequestWithHeaders(ServerWebExchange exchange, String token) {
         Claims claims = jwtUtil.getAllClaimsFromToken(token);
         exchange.getRequest().mutate()
-                .header("id", String.valueOf(claims.get("id")))
-                .header("role", "TESTROLE")
+                .header("userId", claims.getId())
+                .header("role", String.valueOf(claims.get("role")))
                 .build();
     }
 }

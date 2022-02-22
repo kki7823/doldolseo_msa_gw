@@ -5,6 +5,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
 import java.util.Date;
 import java.util.function.Function;
 
@@ -12,14 +13,15 @@ import java.util.function.Function;
 public class JwtUtil {
     @Value("${jwt.secret}")
     private String JWT_SECRET;
+    @Value("${jwt.api-key}")
+    private String API_KEY;
 
-    public String getIdFromToken(String token) {
-        return getClaimFromToken(token, Claims::getId);
+    public boolean isInvalid(String token) {
+        return !getAllClaimsFromToken(token).get("api-key").equals(API_KEY);
     }
 
-    public <T> T getClaimFromToken(String token, Function<Claims, T> claimResolver) {
-        final Claims claims = getAllClaimsFromToken(token);
-        return claimResolver.apply(claims);
+    public boolean isTokenExpired(String token) {
+        return getAllClaimsFromToken(token).getExpiration().before(new Date());
     }
 
     public Claims getAllClaimsFromToken(String token) {
@@ -28,11 +30,12 @@ public class JwtUtil {
                 .parseClaimsJws(token).getBody();
     }
 
-    public boolean isTokenExpired(String token) {
-        return this.getAllClaimsFromToken(token).getExpiration().before(new Date());
+    public String getIdFromToken(String token) {
+        return getClaimFromToken(token, Claims::getId);
     }
 
-    public boolean isInvalid(String token) {
-        return this.isTokenExpired(token);
+    public <T> T getClaimFromToken(String token, Function<Claims, T> claimResolver) {
+        final Claims claims = getAllClaimsFromToken(token);
+        return claimResolver.apply(claims);
     }
 }
