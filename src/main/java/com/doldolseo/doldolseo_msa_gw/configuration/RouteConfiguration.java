@@ -15,11 +15,11 @@ public class RouteConfiguration {
     @Autowired
     TestFilter testFilter;
 
-    private final String URI_AREA_REST = "http://doldolseo-area-rest.default.svc.cluster.local:8080";
-    private final String URI_MEMBER_REST = "http://doldolseo-member-rest.default.svc.cluster.local:8080";
-    private final String URI_REVIEW_REST = "http://doldolseo-review-rest.default.svc.cluster.local:8080";
-    private final String URI_CREW_POST_REST = "http://doldolseo-crew-post-rest.default.svc.cluster.local:8080";
-    private final String URI_CREW_REST = "http://doldolseo-crew-rest.default.svc.cluster.local:8080";
+    private final String URI_AREA_REST = "http://doldolseo-area-rest.rest.svc.cluster.local:8080";
+    private final String URI_MEMBER_REST = "http://doldolseo-member-rest.rest.svc.cluster.local:8080";
+    private final String URI_REVIEW_REST = "http://doldolseo-review-rest.rest.svc.cluster.local:8080";
+    private final String URI_CREW_POST_REST = "http://doldolseo-crew-post-rest.rest.svc.cluster.local:8080";
+    private final String URI_CREW_REST = "http://doldolseo-crew-rest.rest.svc.cluster.local:8080";
 
     @Bean
     public RouteLocator routes(RouteLocatorBuilder builder) {
