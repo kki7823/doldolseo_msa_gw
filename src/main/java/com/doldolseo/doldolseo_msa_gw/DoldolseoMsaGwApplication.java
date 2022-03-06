@@ -8,6 +8,6 @@ public class DoldolseoMsaGwApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(DoldolseoMsaGwApplication.class, args);
-    }
 
+    }
 }
