@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
 @Component
 public class RouterValidator {
     public static final List<EndPoint> openApiEndpoints = Arrays.asList(
+            new EndPoint(Pattern.compile(".*"), "OPTIONS"),
             new EndPoint(Pattern.compile("(.*)/doldolseo/area(.*)"), "GET"),
             new EndPoint(Pattern.compile("(.*)/doldolseo/area(.*)"), "POST"),
             new EndPoint(Pattern.compile("(.*)/doldolseo/member$"), "POST"),

@@ -1,5 +1,11 @@
 server:
   port: 9000
+#  ssl:
+#    key-store: classpath:tutorial.jks
+#    key-store-type: pkcs12
+#    key-store-password: kyeongil7823!
+#    key-password: kyeongil7823!
+#    key-alias: tutorial
 ---
 spring:
   application:
