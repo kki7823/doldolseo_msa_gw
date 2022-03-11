@@ -17,18 +17,18 @@ public class TestFilter implements GatewayFilter {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        ServerHttpRequest request = exchange.getRequest();
-        System.out.println("메소드 "+request.getMethodValue());
-        HttpCookie cookie = request.getCookies().get("token").get(0);
-        final String token = cookie.toString().substring(6);
-
-        System.out.println("token : " + token);
-
-        String id = jwtUtil.getIdFromToken(token);
-        Boolean expDate = jwtUtil.isTokenExpired(token);
-
-        System.out.println("추출한 id : " + id);
-        System.out.println(expDate);
+//        ServerHttpRequest request = exchange.getRequest();
+//        System.out.println("메소드 "+request.getMethodValue());
+//        HttpCookie cookie = request.getCookies().get("token").get(0);
+//        final String token = cookie.toString().substring(6);
+//
+//        System.out.println("token : " + token);
+//
+//        String id = jwtUtil.getIdFromToken(token);
+//        Boolean expDate = jwtUtil.isTokenExpired(token);
+//
+//        System.out.println("추출한 id : " + id);
+//        System.out.println(expDate);
 
 
         return chain.filter(exchange);
