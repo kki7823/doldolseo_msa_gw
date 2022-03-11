@@ -23,13 +23,13 @@ public class PassCorsRoutePredicateHandlerMapping extends RoutePredicateHandlerM
         super(webHandler, routeLocator, globalCorsProperties, environment);
     }
 
+
+
     @Override
     public Mono<Object> getHandler(ServerWebExchange exchange) {
-        System.out.println("[PassCorsRoutePredicateHandlerMapping] getHandler");
-
         return getHandlerInternal(exchange).map(handler -> {
-            System.out.println(exchange.getLogPrefix() + "Mapped to " + handler);
             return handler;
         });
     }
+
 }
