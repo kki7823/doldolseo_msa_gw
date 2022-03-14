@@ -17,8 +17,10 @@ public class TestFilter implements GatewayFilter {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-//        ServerHttpRequest request = exchange.getRequest();
-//        System.out.println("메소드 "+request.getMethodValue());
+        System.out.println("[TestFilter]:filter");
+        ServerHttpRequest request = exchange.getRequest();
+        System.out.println("헤더 : "+request.getHeaders());
+        System.out.println("메소드 "+request.getMethodValue());
 //        HttpCookie cookie = request.getCookies().get("token").get(0);
 //        final String token = cookie.toString().substring(6);
 //
