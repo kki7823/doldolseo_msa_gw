@@ -27,8 +27,12 @@ spring:
             allowedOrigins:
               - http://localhost
               - http://localhost:3000
-              - http://http://doldolseo.com
-              - http://http://doldolseo.com:9999
+              - https://localhost
+              - https://localhost:3000
+              - http://doldolseo.com
+              - http:///doldolseo.com:9999
+              - https://doldolseo.com
+              - https:///doldolseo.com:9999
             allowedHeaders:
               - x-requested-with
               - authorization
