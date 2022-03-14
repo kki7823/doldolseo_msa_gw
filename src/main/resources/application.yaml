@@ -25,9 +25,10 @@ spring:
         cors-configurations:
           '[/**]':
             allowedOrigins:
+              - http://localhost
               - http://localhost:3000
-              - http://http://34.64.123.102
-              - http://http://34.64.123.102:9000
+              - http://http://doldolseo.com
+              - http://http://doldolseo.com:9999
             allowedHeaders:
               - x-requested-with
               - authorization
