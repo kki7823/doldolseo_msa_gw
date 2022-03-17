@@ -25,14 +25,11 @@ spring:
         cors-configurations:
           '[/**]':
             allowedOrigins:
-              - http://localhost
-              - http://localhost:3000
               - https://localhost
               - https://localhost:3000
-              - http://doldolseo.com
-              - http:///doldolseo.com:9999
               - https://doldolseo.com
-              - https:///doldolseo.com:9999
+              - https:///doldolseo.com:62384
+              - https:///doldolseo.com:62390
             allowedHeaders:
               - x-requested-with
               - authorization
