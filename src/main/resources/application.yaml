@@ -25,8 +25,8 @@ spring:
         cors-configurations:
           '[/**]':
             allowedOrigins:
-              - https://localhost
-              - https://localhost:3000
+              - http://localhost
+              - http://localhost:3000
               - https://doldolseo.com
               - https://doldolseo.com:62384
               - https://doldolseo.com:62390
